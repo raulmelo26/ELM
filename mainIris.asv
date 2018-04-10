@@ -1,0 +1,46 @@
+clc; clear;
+
+dados = load('C:\Users\Raul Melo\Documents\ELM\dataIris.dat');
+
+numRealizacoes = 20;
+numAtributos = 4;
+numNeuroniosOcultos = 10;
+numNeuronioSaida = 3;
+offset = 0.5;
+numPadroes = size(dados,1);
+
+dados = [normaliza(dados(:,1:4)) dados(:,5:7)];
+
+for i = 1:numRealizacoes
+
+    dados = dados(randperm(numPadroes),:);
+% 
+    [X_treino,Y_treino, X_teste, Y_teste] = separaDados(dados,0.8);
+%     
+    [dadosTreino,dadosTeste] = separaDados(dados,0.8);
+    X_treino = dadosTreino(:,1:4);
+    Y_treino = dadosTreino(:,5:7);
+    X_teste  = dadosTeste(:,1:4);
+    Y_teste  = dadosTeste(:,5:7);
+
+    W1 = rand(numNeuroniosOcultos,(numAtributos+1))-0.5;
+    W2 = rand(numNeuronioSaida,(numNeuroniosOcultos+1))-0.5;
+
+    [H, Y] = sentidoDireto(W1,W2,X_treino, 1);
+
+    M = (H\Y_treino)';
+
+    [H, Y] = sentidoDireto(W1,M,X_teste, 1);
+
+    acc(i) = teste(Y, Y_teste);
+
+
+end
+
+media_acuracia = mean(acc)
+desvioPadrao = std(acc)
+
+
+
+
+
